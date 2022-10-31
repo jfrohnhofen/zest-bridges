@@ -9,5 +9,6 @@ require (
 	github.com/marcusolsson/tui-go v0.4.0 // indirect
 	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
+	github.com/ziutek/ftdi v0.0.1 // indirect
 	golang.org/x/text v0.3.0 // indirect
 )

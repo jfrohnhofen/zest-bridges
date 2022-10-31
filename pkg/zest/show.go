@@ -2,17 +2,29 @@ package zest
 
 import (
 	"image"
+	"log"
+	"net"
+	"sync"
 	"time"
 
 	"github.com/marcusolsson/tui-go"
+	"github.com/ziutek/ftdi"
 )
 
-const frameDuration = 1000
+const frameDuration = 40
 
 var cue *Cue
 
 type Frame struct {
-	dmx [10]uint8
+	dmx      []uint8
+	videoCmd string
+}
+
+func (f Frame) clone() Frame {
+	o := Frame{}
+	o.dmx = make([]uint8, 512)
+	copy(o.dmx, f.dmx)
+	return o
 }
 
 type Cue struct {
@@ -27,21 +39,34 @@ type Cue struct {
 func (cue *Cue) getDmx(ch uint16) uint8 {
 	frameIdx := (cue.time + frameDuration - 1) / frameDuration
 	for len(cue.frames) <= int(frameIdx) {
-		cue.frames = append(cue.frames, cue.frames[len(cue.frames)-1])
+		newFrame := cue.frames[len(cue.frames)-1].clone()
+		cue.frames = append(cue.frames, newFrame)
 	}
-	return cue.frames[frameIdx].dmx[ch]
+	return cue.frames[frameIdx].dmx[ch-1]
 }
 
 func (cue *Cue) setDmx(ch uint16, val uint8) {
 	frameIdx := (cue.time + cue.animateDt + frameDuration) / frameDuration
 	for len(cue.frames) <= int(frameIdx) {
-		cue.frames = append(cue.frames, cue.frames[len(cue.frames)-1])
+		newFrame := cue.frames[len(cue.frames)-1].clone()
+		cue.frames = append(cue.frames, newFrame)
 	}
-	cue.frames[frameIdx].dmx[ch] = val
+	for i := frameIdx; i < uint32(len(cue.frames)); i++ {
+		cue.frames[i].dmx[ch-1] = val
+	}
+}
+
+func (cue *Cue) setVideo(cmd string) {
+	frameIdx := (cue.time + cue.animateDt + frameDuration) / frameDuration
+	for len(cue.frames) <= int(frameIdx) {
+		newFrame := cue.frames[len(cue.frames)-1].clone()
+		cue.frames = append(cue.frames, newFrame)
+	}
+	cue.frames[frameIdx].videoCmd = cmd
 }
 
 func (cue *Cue) animate(dur uint32, fn func(dt uint32)) {
-	for dt := (cue.time + frameDuration - 1) / frameDuration; dt < cue.time+dur+frameDuration-1; dt += frameDuration {
+	for dt := (cue.time + frameDuration - 1) / frameDuration * frameDuration; dt < cue.time+dur+frameDuration-1; dt += frameDuration {
 		cue.animateDt = dt - cue.time
 		fn(cue.animateDt)
 	}
@@ -61,7 +86,7 @@ func (Show) WaitFor(dur uint32) {
 
 func (Show) WaitUntil(time uint32) {
 	if cue.time > time {
-		panic("negative wait time")
+		log.Fatal("negative wait time")
 	}
 	cue.time = time
 	if cue.time > cue.maxTime {
@@ -74,17 +99,11 @@ func (Show) Wait() {
 }
 
 type Show struct {
-	dmxDevice   string
-	videoDevice string
-	cues        []Cue
-}
-
-func NewShow(dmxDevice, videoDevice string) Show {
-	return Show{dmxDevice, videoDevice, nil}
+	cues []Cue
 }
 
 func (show *Show) AddCue(name string, descr string, fn func()) {
-	prevFrame := Frame{}
+	prevFrame := Frame{make([]uint8, 512), ""}
 	if len(show.cues) > 0 {
 		prevCue := show.cues[len(show.cues)-1]
 		prevFrame = prevCue.frames[len(prevCue.frames)-1]
@@ -94,6 +113,8 @@ func (show *Show) AddCue(name string, descr string, fn func()) {
 	show.cues = append(show.cues, *cue)
 	cue = nil
 }
+
+var dmx *ftdi.Device
 
 func (show Show) Run() {
 	numCues := len(show.cues)
@@ -112,7 +133,7 @@ func (show Show) Run() {
 
 	ui, err := tui.New(scrollArea)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	down := func() {
@@ -155,7 +176,10 @@ func (show Show) Run() {
 		down()
 	}
 
-	ui.SetKeybinding("Esc", func() { ui.Quit() })
+	ui.SetKeybinding("Esc", func() {
+		ui.Quit()
+		log.Fatal("Done")
+	})
 	ui.SetKeybinding("Down", down)
 	ui.SetKeybinding("Up", up)
 	ui.SetKeybinding("Enter", next)
@@ -163,9 +187,13 @@ func (show Show) Run() {
 
 	go releaseToken()
 
-	if err := ui.Run(); err != nil {
-		panic(err)
-	}
+	go func() {
+		if err := ui.Run(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	runDmxLoop()
 }
 
 var token = make(chan bool)
@@ -191,12 +219,71 @@ func outputCue(cue Cue) {
 	claimToken()
 
 	start := time.Now()
-	for i := range cue.frames[1:] {
+	for i, frame := range cue.frames[1:] {
 		if !stillHasToken() {
 			break
 		}
 		time.Sleep((time.Duration(i) * frameDuration * time.Millisecond) - time.Since(start))
+
+		mu.Lock()
+		dmxFrame = frame.dmx
+		mu.Unlock()
+
+		if frame.videoCmd != "" {
+			conn, _ := net.Dial("udp", "192.168.1.1:9000")
+			conn.Write([]byte(frame.videoCmd))
+		}
 	}
 
 	releaseToken()
+}
+
+var (
+	mu       = sync.Mutex{}
+	dmxFrame = make([]byte, 512)
+)
+
+func runDmxLoop() {
+	dmx, err := ftdi.OpenFirst(0x0403, 0x6001, ftdi.ChannelAny)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := dmx.SetBaudrate(250000); err != nil {
+		log.Fatal(err)
+	}
+	if err := dmx.SetLineProperties(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone); err != nil {
+		log.Fatal(err)
+	}
+	if err := dmx.SetFlowControl(ftdi.FlowCtrlDisable); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := dmx.PurgeBuffers(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := dmx.SetRTS(0); err != nil {
+		log.Fatal(err)
+	}
+
+	for {
+		if err := dmx.SetLineProperties2(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone, ftdi.BreakOn); err != nil {
+			log.Fatal(err)
+		}
+		if err := dmx.SetLineProperties2(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone, ftdi.BreakOff); err != nil {
+			log.Fatal(err)
+		}
+
+		mu.Lock()
+		data := dmxFrame
+		mu.Unlock()
+		if _, err := dmx.Write([]byte{0x00}); err != nil {
+			log.Fatal(err)
+		}
+		if _, err := dmx.Write(data); err != nil {
+			log.Fatal(err)
+		}
+		time.Sleep(33 * time.Millisecond)
+	}
 }
