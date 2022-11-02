@@ -116,7 +116,7 @@ func (show *Show) AddCue(name string, descr string, fn func()) {
 
 var dmx *ftdi.Device
 
-func (show Show) Run() {
+func (show Show) Run(first bool) {
 	numCues := len(show.cues)
 	selectedCue := 0
 	activeCue := -1
@@ -185,13 +185,18 @@ func (show Show) Run() {
 	ui.SetKeybinding("Enter", next)
 	ui.SetKeybinding(" ", next)
 
+	if first {
+		go func() {
+			outputCue(show.cues[0])
+		}()
+	} else {
+		go func() {
+			if err := ui.Run(); err != nil {
+				log.Fatal(err)
+			}
+		}()
+	}
 	go releaseToken()
-
-	go func() {
-		if err := ui.Run(); err != nil {
-			log.Fatal(err)
-		}
-	}()
 
 	runDmxLoop()
 }
