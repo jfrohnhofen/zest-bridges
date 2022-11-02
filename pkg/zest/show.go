@@ -29,6 +29,7 @@ func (f Frame) clone() Frame {
 
 type Cue struct {
 	name      string
+	called    bool
 	descr     string
 	frames    []Frame
 	time      uint32
@@ -108,7 +109,7 @@ func (show *Show) AddCue(name string, descr string, fn func()) {
 		prevCue := show.cues[len(show.cues)-1]
 		prevFrame = prevCue.frames[len(prevCue.frames)-1]
 	}
-	cue = &Cue{name, descr, []Frame{prevFrame}, 0, 0, 0}
+	cue = &Cue{name, false, descr, []Frame{prevFrame}, 0, 0, 0}
 	fn()
 	show.cues = append(show.cues, *cue)
 	cue = nil
@@ -124,8 +125,16 @@ func (show Show) Run(first bool) {
 
 	cueList := tui.NewTable(0, 0)
 	for _, cue := range show.cues {
-		cueList.AppendRow(tui.NewLabel(" "), tui.NewLabel(cue.name), tui.NewLabel(cue.descr))
+		called := tui.NewLabel("not called")
+		if cue.called {
+			called = tui.NewLabel("called")
+		}
+		cueList.AppendRow(tui.NewLabel(" "), tui.NewLabel(cue.name), called, tui.NewLabel(cue.descr))
 	}
+	cueList.SetColumnStretch(0, 2)
+	cueList.SetColumnStretch(1, 5)
+	cueList.SetColumnStretch(2, 5)
+	cueList.SetColumnStretch(3, 80)
 	cueList.Select(selectedCue)
 
 	scrollArea := tui.NewScrollArea(cueList)
@@ -235,8 +244,10 @@ func outputCue(cue Cue) {
 		mu.Unlock()
 
 		if frame.videoCmd != "" {
-			conn, _ := net.Dial("udp", "192.168.1.1:9000")
-			conn.Write([]byte(frame.videoCmd))
+			conn, err := net.Dial("udp", "192.168.1.1:9000")
+			if err == nil {
+				conn.Write([]byte(frame.videoCmd))
+			}
 		}
 	}
 
@@ -273,22 +284,14 @@ func runDmxLoop() {
 	}
 
 	for {
-		if err := dmx.SetLineProperties2(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone, ftdi.BreakOn); err != nil {
-			log.Fatal(err)
-		}
-		if err := dmx.SetLineProperties2(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone, ftdi.BreakOff); err != nil {
-			log.Fatal(err)
-		}
+		dmx.SetLineProperties2(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone, ftdi.BreakOn)
+		dmx.SetLineProperties2(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone, ftdi.BreakOff)
 
 		mu.Lock()
 		data := dmxFrame
 		mu.Unlock()
-		if _, err := dmx.Write([]byte{0x00}); err != nil {
-			log.Fatal(err)
-		}
-		if _, err := dmx.Write(data); err != nil {
-			log.Fatal(err)
-		}
+		dmx.Write([]byte{0x00})
+		dmx.Write(data)
 		time.Sleep(33 * time.Millisecond)
 	}
 }
