@@ -14,12 +14,12 @@ func interactive() {
 		"kitchenWall":        kitchenWall,
 		"kitchenHangingLamp": kitchenHangingLamp,
 		"porch":              porch,
-		"moverUSL":           moverUSL,
-		"moverUSR":           moverUSR,
-		"moverDSLL":          moverDSLL,
-		"moverDSL":           moverDSL,
-		"moverDSR":           moverDSR,
-		"moverDSRR":          moverDSRR,
+		"mover1":             mover1,
+		"mover2":             mover2,
+		"mover3":             mover3,
+		"mover4":             mover4,
+		"mover5":             mover5,
+		"mover6":             mover6,
 
 		"band":   band,
 		"garden": garden,
@@ -49,12 +49,12 @@ var (
 	kitchenHangingLamp = zest.NewDimmer(28)
 	porch              = zest.NewDimmer(37, 47, 19)
 
-	moverUSL  = zest.NewAura(360)
-	moverUSR  = zest.NewAura(375)
-	moverDSLL = zest.NewAura(300)
-	moverDSL  = zest.NewAura(315)
-	moverDSR  = zest.NewAura(330)
-	moverDSRR = zest.NewAura(345)
+	mover1 = zest.NewAura(300)
+	mover2 = zest.NewAura(315)
+	mover3 = zest.NewAura(330)
+	mover4 = zest.NewAura(345)
+	mover5 = zest.NewAura(360)
+	mover6 = zest.NewAura(375)
 
 	band   = zest.NewDimmer(25)
 	garden = zest.NewDimmer(33, 36)
@@ -72,37 +72,3 @@ var (
 
 	video = zest.NewVideo("/mnt/sdcard/Render_09-10-22_new.led")
 )
-
-func foo() {
-	workingLights.Off()
-	house.Off()
-	backlights.Off()
-
-	kitchenUS.Off()
-	kitchenDS.Off()
-	kitchenWall.Off()
-	kitchenHangingLamp.Off()
-	porch.Off()
-
-	moverUSL.Close()
-	moverUSR.Close()
-	moverDSLL.Close()
-	moverDSL.Close()
-	moverDSR.Close()
-	moverDSRR.Close()
-
-	band.Off()
-	garden.Off()
-	phone.Off()
-
-	centerWashUS.Off()
-	centerWashDS.Off()
-	rightWashUS.Off()
-	rightWashDS.Off()
-
-	barHangingLamps.Off()
-	graves.Off()
-	spot.Off()
-	stars.Off()
-
-}

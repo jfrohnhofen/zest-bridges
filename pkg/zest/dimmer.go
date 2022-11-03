@@ -37,6 +37,9 @@ func (dimmer Dimmer) Off() {
 }
 
 func (dimmer Dimmer) FadeFromTo(from, to uint8, dur uint32) {
+	if dur < frameDuration {
+		dimmer.SetTo(to)
+	}
 	cue.animate(dur, func(dt uint32) {
 		for _, ch := range dimmer.channels {
 			cue.setDmx(ch, interpolate(dur, dt, from, to))
@@ -45,6 +48,9 @@ func (dimmer Dimmer) FadeFromTo(from, to uint8, dur uint32) {
 }
 
 func (dimmer Dimmer) FadeTo(to uint8, dur uint32) {
+	if dur < frameDuration {
+		dimmer.SetTo(to)
+	}
 	cue.animate(dur, func(dt uint32) {
 		for _, ch := range dimmer.channels {
 			cue.setDmx(ch, interpolate(dur, dt, cue.getDmx(ch), to))
