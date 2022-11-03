@@ -103,13 +103,13 @@ type Show struct {
 	cues []Cue
 }
 
-func (show *Show) AddCue(name string, descr string, fn func()) {
+func (show *Show) AddCue(name string, called bool, descr string, fn func()) {
 	prevFrame := Frame{make([]uint8, 512), ""}
 	if len(show.cues) > 0 {
 		prevCue := show.cues[len(show.cues)-1]
 		prevFrame = prevCue.frames[len(prevCue.frames)-1]
 	}
-	cue = &Cue{name, false, descr, []Frame{prevFrame}, 0, 0, 0}
+	cue = &Cue{name, called, descr, []Frame{prevFrame}, 0, 0, 0}
 	fn()
 	show.cues = append(show.cues, *cue)
 	cue = nil
@@ -133,7 +133,7 @@ func (show Show) Run(first bool) {
 	}
 	cueList.SetColumnStretch(0, 2)
 	cueList.SetColumnStretch(1, 5)
-	cueList.SetColumnStretch(2, 5)
+	cueList.SetColumnStretch(2, 8)
 	cueList.SetColumnStretch(3, 80)
 	cueList.Select(selectedCue)
 
@@ -260,6 +260,9 @@ var (
 )
 
 func runDmxLoop() {
+	for {
+		time.Sleep(time.Second)
+	}
 	dmx, err := ftdi.OpenFirst(0x0403, 0x6001, ftdi.ChannelAny)
 	if err != nil {
 		log.Fatal(err)
