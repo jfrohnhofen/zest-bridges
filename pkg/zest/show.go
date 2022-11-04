@@ -231,10 +231,11 @@ func releaseToken() {
 
 func outputCue(cue Cue) {
 	claimToken()
-
+	releasedToken := false
 	start := time.Now()
 	for i, frame := range cue.frames[1:] {
 		if !stillHasToken() {
+			releasedToken = true
 			break
 		}
 		time.Sleep((time.Duration(i) * frameDuration * time.Millisecond) - time.Since(start))
@@ -250,8 +251,9 @@ func outputCue(cue Cue) {
 			}
 		}
 	}
-
-	releaseToken()
+	if !releasedToken {
+		releaseToken()
+	}
 }
 
 var (

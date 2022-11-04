@@ -393,6 +393,7 @@ func main() {
 	show.AddCue("LX-9.4", true, "", func() {
 		phone.FadeOn(2000)
 		barHangingLamps.FadeOn(10000)
+		barSign.On()
 		// bar
 		mover1.FadeTo(255, 10000)
 		mover2.FadeTo(165, 10000)
@@ -416,7 +417,7 @@ func main() {
 		video.Play(22118, 22369)
 		spot.Off()
 		barHangingLamps.Off()
-		// TODO: bar sign off
+		barSign.Off()
 		mover1.FadeTo(0, 500)
 		mover2.FadeTo(0, 500)
 		mover3.FadeTo(0, 500)

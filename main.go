@@ -71,6 +71,7 @@ var (
 	spot            = zest.NewDimmer(17)
 	
 	onAirSign = zest.NewDimmer(22)
+	barSign = zest.NewDimmer(23)
 
 	video = zest.NewVideo("/mnt/sdcard/Render_04-11-22.led")
 )
