@@ -133,7 +133,7 @@ func main() {
 	show.AddCue("LX-3.1", false, "visual: Francesca sitting in truck", func() {
 		kitchen(0, 3000, true)
 	})
-	show.AddCue("LX-3.2", false, "visual: Robert reverses and looks forward again", func() {
+	show.AddCue("LX-3.2", false, "visual: Robert reverses", func() {
 		video.Play(1076, 7076)
 		mover5.FadeTo(0, 5000)
 	})
@@ -171,7 +171,7 @@ func main() {
 		mover3.FadeTo(255, 5000)
 		mover4.FadeTo(255, 5000)
 	})
-	show.AddCue("LX-4.5", true, "", func() {
+	show.AddCue("LX-4.5", false, "visual: they pick up bench", func() {
 		phone.Off()
 		mover3.FadeTo(0, 5000)
 		mover4.FadeTo(0, 5000)
@@ -184,7 +184,7 @@ func main() {
 		centerWashDS.FadeOn(5000)
 		rightWashUS.FadeOn(5000)
 		rightWashDS.FadeOn(5000)
-		kitchen(60, 5000, true)
+		kitchen(60, 20000, true)
 		mover2.FadeTo(255, 5000) // vTODO Check
 	})
 	show.AddCue("LX-5.2", true, "", func() {
@@ -238,19 +238,19 @@ func main() {
 	})
 	show.AddCue("LX-6.2", true, "", func() {
 		kitchen(128, 10000, true)
+		mover3.FadeTo(0, 2000)
+		mover6.FadeTo(0, 2000)
 	})
 	show.AddCue("LX-6.3", true, "", func() {
 		spot.FadeOff(2000)
 		kitchen(255, 5000, true)
-		mover3.FadeTo(0, 2000)
-		mover6.FadeTo(0, 2000)
 		mover4.Prepare(255, 152, 204, 166, 220, 255, 255, 255) // vTODO Aim to right of phone booth truck
 	})
 	show.AddCue("LX-6.4", true, "", func() {
 		phone.FadeOn(2000)
 		mover4.FadeTo(255, 2000)
 	})
-	show.AddCue("LX-6.5", false, "visual: Francesca hangs up the phone", func() {
+	show.AddCue("LX-6.5", true, "Francesca hangs up the phone", func() {
 		phone.Off()
 		mover1.FadeTo(0,500)
 		mover2.FadeTo(0,500)
@@ -441,6 +441,9 @@ func main() {
 		mover2.FadeTo(0, 500)
 		mover4.FadeTo(0, 500)
 		mover6.FadeTo(0, 500)
+		kitchen(0, 500, true)
+		centerWashDS.FadeOff(500)
+		centerWashUS.FadeOff(500)
 		show.Wait()
 
 		mover1.Prepare(255, 127, 37, 173, 219, 255, 255, 255)
@@ -472,7 +475,7 @@ func main() {
 		mover4.FadeTo(0, 2000)
 		mover6.FadeTo(0, 2000)
 	})
-	show.AddCue("LX-11.3", true, "", func() {
+	show.AddCue("LX-11.3", false, "visual: Francesca and Robert moving upstage", func() {
 		video.Play(29223, 29350)
 		kitchen(0, 20000, true)
 		stars.FadeOff(5000)
@@ -607,10 +610,15 @@ func main() {
 		mover1.FadeTo(255, 3000)
 		mover2.FadeTo(255, 3000)
 		mover6.FadeTo(255, 3000)
+		mover3.FadeTo(0, 3000)
+		mover4.FadeTo(0, 3000)
+		centerWashDS.FadeTo(128, 3000)
+		centerWashUS.FadeTo(128, 3000)
+		kitchen(128, 3000, true)
 		show.Wait()
 		mover3.Prepare(255, 142, 116, 80, 0, 225, 255, 225) // vTODO Aim upstage more, hint of green
 		mover4.Prepare(255, 128, 133, 73, 0, 255, 255, 255) // vTODO Aim to table
-	})
+	}) 
 	show.AddCue("LX-13.4", true, "", func() {
 		mover3.FadeTo(0, 2000)
 		mover4.FadeTo(0, 2000)
@@ -665,7 +673,7 @@ func main() {
 		mover3.FadeTo(255, 2000)
 		mover4.FadeTo(255, 2000)
 	})
-	show.AddCue("LX-13.10.5", false, "TODO", func() {
+	show.AddCue("LX-13.10.5", false, "visual: Francesca sits down at table", func() {
 		spot.FadeOff(2000)
 	})
 	show.AddCue("LX-13.11", false, "visual: as they walk off", func() {
@@ -769,7 +777,7 @@ func main() {
 		mover4.FadeTo(0, 2000)
 		kitchen(0, 2000, true)
 	})
-	show.AddCue("LX-14.9", false, "visual", func() {
+	show.AddCue("LX-14.9", false, "visual: Bud rushes outside", func() {
 		rightWashUS.On()
 		rightWashDS.On()
 		mover5.Prepare(255, 132, 103, 119, 188, 255, 255, 255) // vTODO move down stage for Linda
@@ -915,7 +923,7 @@ func main() {
 		mover5.FadeTo(0, 6000)
 		mover6.FadeTo(0, 15000)
 	})
-	show.AddCue("LX-16.9", true, "visual: Bud exiting", func() {
+	show.AddCue("LX-16.9", false, "visual: Bud exiting", func() {
 		graves.FadeOff(3000)
 		spot.FadeOff(3000)
 		show.Wait()
@@ -1043,7 +1051,7 @@ func main() {
 	})
 	
 	// #19 - BOWS / EXIT
-	show.AddCue("LX-19.1", true, "audio: when strings start playing", func() {
+	show.AddCue("LX-19.1", true, "lights for bows", func() {
 		video.Play(34505, 34556)
 		kitchen(255, 0, true)
 		centerWashDS.On()
@@ -1058,7 +1066,7 @@ func main() {
 		mover5.FadeTo(255, 400)
 		mover6.FadeTo(255, 400)
 	})
-	show.AddCue("LX-19.2", true, "after first run of bows", func() {
+	show.AddCue("LX-19.2", true, "blackout; house on", func() {
 		kitchen(0, 0, true)
 		band.Off()
 		centerWashDS.Off()
