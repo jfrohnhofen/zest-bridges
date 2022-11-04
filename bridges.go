@@ -250,7 +250,7 @@ func main() {
 		phone.FadeOn(2000)
 		mover4.FadeTo(255, 2000)
 	})
-	show.AddCue("LX-6.5", true, "Francesca hangs up the phone", func() {
+	show.AddCue("LX-6.5", false, "Francesca hangs up the phone", func() {
 		phone.Off()
 		mover1.FadeTo(0,500)
 		mover2.FadeTo(0,500)
@@ -887,7 +887,6 @@ func main() {
 	})
 	show.AddCue("LX-16.5", true, "", func() {
 		garden.FadeOn(3000)
-		spot.FadeOff(2000)
 		mover1.Prepare(255, 110, 115, 77, 49, 255, 255, 255)
 		mover2.Prepare(255, 110, 119, 82, 49, 255, 255, 255)
 		mover3.Prepare(255, 110, 123, 78, 49, 255, 255, 255)
