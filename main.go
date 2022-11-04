@@ -69,6 +69,8 @@ var (
 	graves          = zest.NewDimmer(24)
 	stars           = zest.NewStars(400)
 	spot            = zest.NewDimmer(17)
+	
+	onAirSign = zest.NewDimmer(22)
 
-	video = zest.NewVideo("/mnt/sdcard/Render_09-10-22_new.led")
+	video = zest.NewVideo("/mnt/sdcard/Render_04-11-22.led")
 )

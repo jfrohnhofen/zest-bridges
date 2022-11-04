@@ -60,7 +60,6 @@ func main() {
 		kitchen(255, 4000, true)
 	})
 	show.AddCue("LX-1.14", false, "", func() {
-		spot.FadeOff(2000)
 		backlights.FadeOff(2000)
 		mover1.Prepare(255, 255, 22, 200, 0, 255, 255, 255)
 		mover2.Prepare(255, 191, 21, 165, 0, 255, 255, 255)
@@ -77,6 +76,7 @@ func main() {
 		mover6.FadeTo(255, 3000)
 	})
 	show.AddCue("LX-1.16", false, "audio: on last (second / low) chord of music", func() {
+		spot.FadeOff(2000)
 		mover1.FadeTo(0, 3000)
 		mover2.FadeTo(0, 3000)
 		mover3.FadeTo(0, 3000)
@@ -452,7 +452,7 @@ func main() {
 	show.AddCue("LX-10.6", true, "start of music after voice on radio", func() {
 		video.Play(22370, 29222)
 		stars.FadeOn(1000)
-		// TODO: on-air sign
+		onAirSign.On()
 		mover1.FadeTo(255, 1000)
 		mover2.FadeTo(255, 1000)
 		mover3.FadeTo(255, 1000)
@@ -466,7 +466,7 @@ func main() {
 	})
 	show.AddCue("LX-11.2", false, "visual: Marge exiting", func() {
 		// TODO: video?
-		// TODO: on-air off
+		onAirSign.Off()
 		mover2.FadeTo(0, 2000)
 		mover3.FadeTo(0, 2000)
 		mover4.FadeTo(0, 2000)
@@ -578,7 +578,7 @@ func main() {
 		mover3.FadeTo(255, 2000)
 		
 	})
-	show.AddCue("LX-12.7", true, "", func() {
+	show.AddCue("LX-12.7", false, "visual: Francesca and Robert fall back into bed", func() {
 		mover1.FadeTo(0, 4000)
 		mover2.FadeTo(0, 4000)
 		mover3.FadeTo(0, 4000)
@@ -607,15 +607,13 @@ func main() {
 		mover1.FadeTo(255, 3000)
 		mover2.FadeTo(255, 3000)
 		mover6.FadeTo(255, 3000)
-		mover3.FadeTo(0, 3000)
-		mover4.FadeTo(0, 3000)
 		show.Wait()
 		mover3.Prepare(255, 142, 116, 80, 0, 225, 255, 225) // vTODO Aim upstage more, hint of green
 		mover4.Prepare(255, 128, 133, 73, 0, 255, 255, 255) // vTODO Aim to table
 	})
 	show.AddCue("LX-13.4", true, "", func() {
-		mover3.FadeTo(128, 2000)
-		mover4.FadeTo(128, 2000)
+		mover3.FadeTo(0, 2000)
+		mover4.FadeTo(0, 2000)
 		mover2.FadeTo(0, 2000)
 		show.Wait()
 		mover2.Prepare(255, 221, 26, 200, 0, 255, 255, 255)
@@ -667,7 +665,7 @@ func main() {
 		mover3.FadeTo(255, 2000)
 		mover4.FadeTo(255, 2000)
 	})
-	show.AddCue("LX-13.11.a", false, "TODO", func() {
+	show.AddCue("LX-13.10.5", false, "TODO", func() {
 		spot.FadeOff(2000)
 	})
 	show.AddCue("LX-13.11", false, "visual: as they walk off", func() {

@@ -240,7 +240,7 @@ func outputCue(cue Cue) {
 		time.Sleep((time.Duration(i) * frameDuration * time.Millisecond) - time.Since(start))
 
 		mu.Lock()
-		dmxFrame = frame.dmx
+		dmxFrame = frame.dmx[:]
 		mu.Unlock()
 
 		if frame.videoCmd != "" {
@@ -288,7 +288,7 @@ func runDmxLoop() {
 		dmx.SetLineProperties2(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone, ftdi.BreakOff)
 
 		mu.Lock()
-		data := dmxFrame
+		data := dmxFrame[:]
 		mu.Unlock()
 		dmx.Write([]byte{0x00})
 		dmx.Write(data)
