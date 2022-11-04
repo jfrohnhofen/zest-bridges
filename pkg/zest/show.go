@@ -260,9 +260,6 @@ var (
 )
 
 func runDmxLoop() {
-	for {
-		time.Sleep(time.Second)
-	}
 	dmx, err := ftdi.OpenFirst(0x0403, 0x6001, ftdi.ChannelAny)
 	if err != nil {
 		log.Fatal(err)
