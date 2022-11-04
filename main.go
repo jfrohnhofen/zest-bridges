@@ -39,7 +39,7 @@ func interactive() {
 
 var (
 	workingLights = zest.NewDimmer(11, 46)
-	house         = zest.NewDimmer(501, 502, 503, 504, 506, 507, 508, 509)
+	house         = zest.NewDimmer(501, 502, 503, 504, 506, 507, 508, 509, 510)
 
 	backlights = zest.NewDimmer(45, 48)
 

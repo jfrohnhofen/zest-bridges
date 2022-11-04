@@ -287,10 +287,10 @@ func runDmxLoop() {
 		dmx.SetLineProperties2(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone, ftdi.BreakOn)
 		dmx.SetLineProperties2(ftdi.DataBits8, ftdi.StopBits2, ftdi.ParityNone, ftdi.BreakOff)
 
+		data := make([]byte, 513)
 		mu.Lock()
-		data := dmxFrame[:]
+		copy(data[1:], dmxFrame[:])
 		mu.Unlock()
-		dmx.Write([]byte{0x00})
 		dmx.Write(data)
 		time.Sleep(33 * time.Millisecond)
 	}

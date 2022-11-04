@@ -238,11 +238,11 @@ func main() {
 	})
 	show.AddCue("LX-6.2", true, "", func() {
 		kitchen(128, 10000, true)
-		mover3.FadeTo(0, 2000)
-		mover6.FadeTo(0, 2000)
 	})
 	show.AddCue("LX-6.3", true, "", func() {
 		spot.FadeOff(2000)
+		mover3.FadeTo(0, 2000)
+		mover6.FadeTo(0, 2000)
 		kitchen(255, 5000, true)
 		mover4.Prepare(255, 152, 204, 166, 220, 255, 255, 255) // vTODO Aim to right of phone booth truck
 	})
@@ -441,7 +441,6 @@ func main() {
 		mover2.FadeTo(0, 500)
 		mover4.FadeTo(0, 500)
 		mover6.FadeTo(0, 500)
-		kitchen(0, 500, true)
 		centerWashDS.FadeOff(500)
 		centerWashUS.FadeOff(500)
 		show.Wait()
@@ -1032,13 +1031,13 @@ func main() {
 		mover3.FadeTo(255, 3000)
 	})
 	show.AddCue("LX-18.4", true, "", func() {
-		video.Play(34428, 34504)
 		spot.FadeOff(3000)
 		show.Wait()
 		mover2.FadeTo(0, 3000)
 		mover3.FadeTo(0, 3000)
 	})
 	show.AddCue("LX-18.5", true, "", func() {
+		video.Play(34428, 34504)
 		stars.FadeOn(100)
 		mover1.Prepare(255, 100, 207, 175, 0, 255, 255, 255) // vTODO Aim bow line
 		mover2.Prepare(255, 100, 204, 170, 0, 255, 255, 255) // vTODO Aim bow line
