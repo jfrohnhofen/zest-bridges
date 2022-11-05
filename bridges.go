@@ -710,7 +710,7 @@ func main() {
 	})
 
 	// #14 - BEORE AND AFTER YOU / A MILLION MILES
-	show.AddCue("LX-14.1", true, "", func() {
+	show.AddCue("LX-14.1", true, "", func() {	  
 		stars.FadeOn(10000)
 		mover1.FadeTo(255, 5000) 
 		mover2.FadeTo(195, 5000)
@@ -718,11 +718,14 @@ func main() {
 		mover4.FadeTo(255, 5000)
 	})
 	show.AddCue("LX-14.2", true, "", func() {
+		kitchen(0, 5000, true)
 		video.Play(33392, 33518)
 		mover1.FadeTo(0, 5000)
 		mover2.FadeTo(0, 5000)
 		mover3.FadeTo(0, 5000)
 		mover4.FadeTo(0, 5000)
+		centerWashUS.FadeTo(0, 3000)
+		centerWashDS.FadeTo(0, 3000)
 		show.Wait()
 		stars.FadeOff(7000)
 		backlights.FadeOff(7000)
@@ -733,7 +736,10 @@ func main() {
 		mover4.Prepare(255, 89, 147, 77, 228, 255, 255, 255)
 	})
 	show.AddCue("LX-14.3", true, "", func() {
+		kitchen(128, 3000, true)
 		video.Play(33519, 33595)
+		centerWashUS.FadeTo(128, 3000)
+		centerWashDS.FadeTo(128, 3000)
 		// Bed
 		mover1.FadeTo(255, 3000)
 		mover2.FadeTo(255, 3000)

@@ -185,10 +185,10 @@ func (show Show) Run(first bool) {
 		down()
 	}
 
-	ui.SetKeybinding("Esc", func() {
-		ui.Quit()
-		log.Fatal("Done")
-	})
+	//ui.SetKeybinding("Esc", func() {
+	//	ui.Quit()
+	//	log.Fatal("Done")
+	//})
 	ui.SetKeybinding("Down", down)
 	ui.SetKeybinding("Up", up)
 	ui.SetKeybinding("Enter", next)
@@ -231,12 +231,10 @@ func releaseToken() {
 
 func outputCue(cue Cue) {
 	claimToken()
-	releasedToken := false
 	start := time.Now()
 	for i, frame := range cue.frames[1:] {
 		if !stillHasToken() {
-			releasedToken = true
-			break
+			return
 		}
 		time.Sleep((time.Duration(i) * frameDuration * time.Millisecond) - time.Since(start))
 
@@ -251,9 +249,8 @@ func outputCue(cue Cue) {
 			}
 		}
 	}
-	if !releasedToken {
-		releaseToken()
-	}
+
+	releaseToken()
 }
 
 var (
