@@ -807,8 +807,9 @@ func main() {
 
 	// #15 - REWIND
 	show.AddCue("LX-15.1", true, "", func() {
-		mover1.FadeTo(0, 2000)
-		mover6.FadeTo(0, 2000)
+		mover1.FadeTo(0, 1000)
+		mover5.FadeTo(0, 1000)
+		mover6.FadeTo(0, 1000)
 		show.Wait()
 		mover1.Prepare(255, 212, 109, 50, 0, 255, 127, 255)
 		mover6.Prepare(255, 106, 93, 133, 0, 255, 127, 255)
@@ -830,7 +831,7 @@ func main() {
 		phone.SetTo(60)
 		mover1.FadeTo(0, 2000)
 		show.Wait()
-		mover1.FadeAll(255, 255, 109, 50, 49, 255, 255, 255, 2000)
+		mover1.Prepare(255, 159, 39, 165, 188, 255, 255, 255)
 		mover2.FadeTo(60, 2000)
 		mover3.FadeTo(60, 2000)
 		mover4.FadeTo(60, 2000)
@@ -839,7 +840,7 @@ func main() {
 	})
 	show.AddCue("LX-15.4", false, "visual: Francesca turns", func() {
 		phone.On()
-		mover1.FadeTo(0, 200)
+		mover1.FadeTo(255, 200)
 		mover2.FadeTo(255, 200)
 		mover3.FadeTo(255, 200)
 		mover4.FadeTo(0, 200)
@@ -853,6 +854,7 @@ func main() {
 	show.AddCue("LX-15.6", false, "visual: Robert exiting", func() {
 		video.Play(33700, 33726)
 		spot.Off()
+		mover1.FadeTo(0, 5000)
 		mover2.FadeTo(0, 5000)
 		mover3.FadeTo(0, 5000)
 		mover5.FadeTo(0, 5000)
@@ -1020,7 +1022,7 @@ func main() {
 	})
 
 	// #18 - ALWAYS BETTER
-	show.AddCue("LX-18.1", false, "visual: Francesca walks on and TAKES LETTER", func() {
+	show.AddCue("LX-18.1", false, "visual: Francesca takes letter and STANDS UP", func() {
 		spot.FadeOn(1000)
 		mover1.FadeTo(255, 1000)
 		mover4.FadeTo(255, 1000)
